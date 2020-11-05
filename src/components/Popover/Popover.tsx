@@ -18,6 +18,7 @@ import {useUniqueId} from '../../utilities/unique-id';
 
 import {
   PopoverCloseSource,
+  PopoverAutofocusTarget,
   Pane,
   PopoverOverlay,
   PopoverOverlayProps,
@@ -25,7 +26,7 @@ import {
 } from './components';
 import {setActivatorAttributes} from './set-activator-attributes';
 
-export {PopoverCloseSource};
+export {PopoverCloseSource, PopoverAutofocusTarget};
 
 export interface PopoverProps {
   /** The content to display inside the popover */
@@ -68,6 +69,11 @@ export interface PopoverProps {
   onClose(source: PopoverCloseSource): void;
   /** Accepts a color scheme for the contents of the popover */
   colorScheme?: InversableColorScheme;
+  /**
+   * The preferred auto focus target defaulting to the popover container
+   * @default PopoverAutofocusTarget.Container
+   */
+  autofocusTarget?: PopoverAutofocusTarget;
 }
 
 // TypeScript can't generate types that correctly infer the typing of

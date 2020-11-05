@@ -26,6 +26,12 @@ export enum PopoverCloseSource {
   ScrollOut,
 }
 
+export enum PopoverAutofocusTarget {
+  None,
+  Container,
+  FirstNode,
+}
+
 enum TransitionStatus {
   Entering = 'entering',
   Entered = 'entered',
@@ -50,6 +56,7 @@ export interface PopoverOverlayProps {
   hideOnPrint?: boolean;
   onClose(source: PopoverCloseSource): void;
   colorScheme?: InversableColorScheme;
+  autofocusTarget?: PopoverAutofocusTarget;
 }
 
 interface State {
@@ -158,7 +165,12 @@ export class PopoverOverlay extends PureComponent<PopoverOverlayProps, State> {
   }
 
   private focusContent() {
-    if (this.props.preventAutofocus) {
+    const {autofocusTarget = PopoverAutofocusTarget.Container} = this.props;
+
+    if (
+      this.props.preventAutofocus ||
+      autofocusTarget === PopoverAutofocusTarget.None
+    ) {
       return;
     }
     if (this.contentNode == null) {
@@ -171,9 +183,19 @@ export class PopoverOverlay extends PureComponent<PopoverOverlayProps, State> {
       }
 
       const focusableChild = findFirstFocusableNode(this.contentNode.current);
-      (focusableChild || this.contentNode.current).focus({
-        preventScroll: process.env.NODE_ENV === 'development',
-      });
+
+      if (
+        focusableChild &&
+        autofocusTarget === PopoverAutofocusTarget.FirstNode
+      ) {
+        focusableChild.focus({
+          preventScroll: process.env.NODE_ENV === 'development',
+        });
+      } else {
+        this.contentNode.current.focus({
+          preventScroll: process.env.NODE_ENV === 'development',
+        });
+      }
     });
   }
 

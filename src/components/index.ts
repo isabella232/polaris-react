@@ -195,7 +195,7 @@ export type {PaginationProps} from './Pagination';
 export {PolarisTestProvider} from './PolarisTestProvider';
 export type {WithPolarisTestProviderOptions} from './PolarisTestProvider';
 
-export {Popover, PopoverCloseSource} from './Popover';
+export {Popover, PopoverCloseSource, PopoverAutofocusTarget} from './Popover';
 export type {PopoverProps} from './Popover';
 
 export {Portal} from './Portal';
