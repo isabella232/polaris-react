@@ -10,7 +10,7 @@ import {TextContainer, TextField, EventListener} from 'components';
 
 import {Key} from '../../../../../types';
 import {PositionedOverlay} from '../../../../PositionedOverlay';
-import {PopoverOverlay} from '../PopoverOverlay';
+import {PopoverAutofocusTarget, PopoverOverlay} from '../PopoverOverlay';
 
 interface HandlerMap {
   [eventName: string]: (event: any) => void;
@@ -346,13 +346,40 @@ describe('<PopoverOverlay />', () => {
       expect(focusSpy).toHaveBeenCalledWith({preventScroll: true});
     });
 
-    it('focuses the first focusbale element on mount', () => {
+    it('focuses the container when autofocusTarget is not set', () => {
+      const id = 'PopoverOverlay-1';
+      const popoverOverlay = mountWithApp(
+        <PopoverOverlay active id={id} activator={activator} onClose={noop} />,
+      );
+
+      const focusTarget = popoverOverlay.find('div', {id})!.domNode;
+      expect(document.activeElement).toBe(focusTarget);
+    });
+
+    it('focuses the container when autofocusTarget is set to Container', () => {
+      const id = 'PopoverOverlay-1';
+      const popoverOverlay = mountWithApp(
+        <PopoverOverlay
+          active
+          id={id}
+          activator={activator}
+          onClose={noop}
+          autofocusTarget={PopoverAutofocusTarget.Container}
+        />,
+      );
+
+      const focusTarget = popoverOverlay.find('div', {id})!.domNode;
+      expect(document.activeElement).toBe(focusTarget);
+    });
+
+    it('focuses the first focusbale node when autofocusTarget is set to FirstNode', () => {
       const popoverOverlay = mountWithApp(
         <PopoverOverlay
           active
           id="PopoverOverlay-1"
           activator={activator}
           onClose={noop}
+          autofocusTarget={PopoverAutofocusTarget.FirstNode}
         >
           <input type="text" />
         </PopoverOverlay>,
@@ -362,14 +389,25 @@ describe('<PopoverOverlay />', () => {
       expect(document.activeElement).toBe(focusTarget);
     });
 
-    it('focuses the overlay on mount when there is no focusbale element', () => {
+    it('does not focus when autofocusTarget is set to None', () => {
       const id = 'PopoverOverlay-1';
       const popoverOverlay = mountWithApp(
-        <PopoverOverlay active id={id} activator={activator} onClose={noop} />,
+        <PopoverOverlay
+          active
+          id={id}
+          activator={activator}
+          onClose={noop}
+          autofocusTarget={PopoverAutofocusTarget.None}
+        >
+          <input type="text" />
+        </PopoverOverlay>,
       );
 
-      const focusTarget = popoverOverlay.find('div', {id})!.domNode;
-      expect(document.activeElement).toBe(focusTarget);
+      const focusTargetContainer = popoverOverlay.find('div', {id})!.domNode;
+      const focusTargetFirstNode = popoverOverlay.find('input', {})!.domNode;
+
+      expect(document.activeElement).not.toBe(focusTargetContainer);
+      expect(document.activeElement).not.toBe(focusTargetFirstNode);
     });
   });
 });
