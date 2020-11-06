@@ -15,6 +15,11 @@
   overflow: visible;
 }
 
+// Stop children from being focused when aria-hidden
+.Collapsible[aria-hidden='true']:not(.animating) {
+  display: none;
+}
+
 .expandOnPrint {
   @include when-printing {
     // stylelint-disable-next-line declaration-no-important

@@ -33,6 +33,7 @@ export function Collapsible({
 }: CollapsibleProps) {
   const [height, setHeight] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isOpen, setIsOpen] = useState(open);
   const collapisbleContainer = useRef(null);
 
   const transitionProperties = transition
@@ -49,15 +50,19 @@ export function Collapsible({
     isAnimating && styles.animating,
   );
 
-  const getHeight = (element: HTMLElement | null) => {
-    return element && open ? element.scrollHeight : 0;
-  };
-
   useEffect(() => {
+    // isAnimating is true when the state changes not on page load
+    if (open !== isOpen) {
+      setIsAnimating(true);
+      setIsOpen(open);
+    }
+
+    const getHeight = (element: HTMLElement | null) => {
+      return element && open ? element.scrollHeight : 0;
+    };
     const height = getHeight(collapisbleContainer.current);
-    setIsAnimating(true);
     setHeight(height);
-  }, [open]);
+  }, [open, isOpen]);
 
   return (
     <div
